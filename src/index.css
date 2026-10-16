@@ -1,0 +1,146 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Theme tokens (RGB channels so Tailwind can apply alpha) */
+:root {
+  --bg: 244 247 242;
+  --surface: 255 255 255;
+  --line: 15 23 42;
+  --ink: 12 18 28;
+  --muted: 88 98 114;
+  --accent: 77 124 15;
+  --glass: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(15, 23, 42, 0.08);
+  --c1: #65a30d;
+  --c2: #0891b2;
+  --c3: #9333ea;
+  --grid: rgba(15, 23, 42, 0.08);
+  color-scheme: light;
+}
+
+.dark {
+  --bg: 7 9 13;
+  --surface: 17 22 30;
+  --line: 255 255 255;
+  --ink: 240 244 248;
+  --muted: 148 160 178;
+  --accent: 198 255 61;
+  --glass: rgba(20, 26, 36, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --c1: #65a30d;
+  --c2: #0aa5c0;
+  --c3: #a855f7;
+  --grid: rgba(255, 255, 255, 0.07);
+  color-scheme: dark;
+}
+
+@layer base {
+  html,
+  body {
+    @apply bg-bg text-ink font-sans antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+  h1, h2, h3, h4 {
+    @apply font-display tracking-tight;
+  }
+  ::selection {
+    background: rgba(198, 255, 61, 0.35);
+  }
+}
+
+@layer components {
+  .glass {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    @apply rounded-3xl shadow-soft;
+  }
+  .text-gradient {
+    @apply bg-brand-gradient bg-clip-text text-transparent;
+    background-size: 200% 100%;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl bg-brand-gradient px-5 py-3 font-display font-semibold text-[#0B0F14] shadow-glow transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_60px_-6px_rgba(198,255,61,0.75)] active:translate-y-0 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none disabled:hover:translate-y-0;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl border border-line/10 bg-line/[0.03] px-5 py-3 font-display font-semibold text-ink transition-all duration-300 hover:-translate-y-0.5 hover:border-line/20 hover:bg-line/[0.06] active:scale-[0.98];
+  }
+  .chip {
+    @apply inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-line/10 px-4 py-2 text-sm font-medium text-muted transition-all duration-200 hover:border-line/25 hover:text-ink;
+  }
+  .chip-active {
+    @apply border-transparent bg-brand-gradient text-[#0B0F14] shadow-glow hover:text-[#0B0F14];
+  }
+  .eyebrow {
+    @apply font-display text-xs font-semibold uppercase tracking-[0.18em] text-accent;
+  }
+}
+
+.bg-grid {
+  background-image: linear-gradient(to right, var(--grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+}
+
+/* Loading skeletons */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  background: rgb(var(--line) / 0.07);
+}
+.skeleton::after,
+.glass[aria-hidden='true']::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgb(var(--line) / 0.07), rgba(198, 255, 61, 0.07), transparent);
+  animation: skeleton-sweep 1.5s ease-in-out infinite;
+}
+@keyframes skeleton-sweep {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes wave {
+  0%, 60%, 100% { transform: rotate(0deg); }
+  10%, 30% { transform: rotate(14deg); }
+  20% { transform: rotate(-8deg); }
+  40% { transform: rotate(-4deg); }
+  50% { transform: rotate(10deg); }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Recharts tweaks */
+.recharts-cartesian-axis-tick-value {
+  fill: rgb(var(--muted));
+  font-size: 12px;
+}
+.recharts-tooltip-cursor {
+  fill: rgba(127, 127, 127, 0.08);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
