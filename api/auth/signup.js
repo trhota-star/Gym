@@ -14,7 +14,10 @@ export default route({
 
     if (fullName.length < 2 || fullName.length > 80) throw new HttpError(400, 'Please enter your name.');
     if (!EMAIL.test(email) || email.length > 254) throw new HttpError(400, 'Please enter a valid email address.');
-    if (password.length < 8) throw new HttpError(400, 'Your password needs at least 8 characters.');
+    if (!password) throw new HttpError(400, 'Please choose a password.');
+    if (password.length < 8 || !/[A-Za-z]/.test(password) || !/\d/.test(password)) {
+      throw new HttpError(400, 'Use at least 8 characters, including a letter and a number.');
+    }
     if (password.length > 72) throw new HttpError(400, 'Your password can be at most 72 characters.');
 
     const goalWorkouts = toInt(b.weeklyGoalWorkouts, { min: 1, max: 14, fallback: 4 });

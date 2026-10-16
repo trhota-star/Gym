@@ -26,7 +26,7 @@ const pages = {
 const fullScreen = ['landing', 'login', 'signup'];
 
 export default function App() {
-  const { page, user, authReady, authError, refreshUser, requireLogin, navigate } = useApp();
+  const { page, user, authReady, authError, refreshUser, requireLogin, takeRedirect, navigate } = useApp();
   const needsLogin = PROTECTED.includes(page);
   const blocked = needsLogin && !user;
 
@@ -35,10 +35,10 @@ export default function App() {
     if (blocked && authReady && !authError) requireLogin(page);
   }, [blocked, authReady, authError, page, requireLogin]);
 
-  // Already logged in? Skip the login and sign-up screens
+  // Logged in on the login/sign-up screen (just now, or from earlier): go where you were headed
   useEffect(() => {
-    if (user && (page === 'login' || page === 'signup')) navigate('dashboard', { replace: true });
-  }, [user, page, navigate]);
+    if (user && (page === 'login' || page === 'signup')) navigate(takeRedirect(), { replace: true });
+  }, [user, page, navigate, takeRedirect]);
 
   const Page = pages[page];
   const shellKey = fullScreen.includes(page) ? page : 'app';

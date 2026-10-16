@@ -50,6 +50,9 @@ export function AppProvider({ children }) {
   const navigate = useCallback((next, { replace = false } = {}) => {
     if (replace) window.location.replace(`#/${next}`);
     else window.location.hash = `/${next}`;
+    // Update right away (not on the later hashchange) so a page change made together with a
+    // login/logout is applied in the same render, before the route guards look at it
+    setPage(PAGES.includes(next) ? next : 'landing');
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);
 
@@ -72,7 +75,8 @@ export function AppProvider({ children }) {
       setAuthError(null);
       return me;
     } catch (err) {
-      setAuthError(err);
+      setUser(null);
+      setAuthError(err.status === 401 ? null : err); // 401 just means "not logged in"
       return null;
     } finally {
       setAuthReady(true);
@@ -91,14 +95,13 @@ export function AppProvider({ children }) {
   }, []);
 
   const finishAuth = useCallback(
+    // App moves a logged-in user off the login/sign-up page (see takeRedirect), so the
+    // user and the page never change in two separate renders that the guards could catch
     (me) => {
       setUser(me);
       setAuthError(null);
-      const next = afterLogin.current ?? 'dashboard';
-      afterLogin.current = null;
-      navigate(next, { replace: true });
     },
-    [navigate]
+    []
   );
 
   const login = useCallback(async (email, password) => {
@@ -117,11 +120,18 @@ export function AppProvider({ children }) {
     try {
       await api('/api/auth/logout', { method: 'POST' });
     } finally {
-      setUser(null);
       navigate('landing');
+      setUser(null);
       toast({ type: 'info', title: 'Logged out', message: 'See you at your next session 👋' });
     }
   }, [navigate, toast]);
+
+  /** Where to go after logging in: the page that asked for a login, else the dashboard. */
+  const takeRedirect = useCallback(() => {
+    const next = afterLogin.current ?? 'dashboard';
+    afterLogin.current = null;
+    return next;
+  }, []);
 
   /** Send logged-out visitors to log in, then bring them back to `target` afterwards. */
   const requireLogin = useCallback(
@@ -149,8 +159,9 @@ export function AppProvider({ children }) {
       signup,
       logout,
       requireLogin,
+      takeRedirect,
     }),
-    [page, navigate, theme, toasts, toast, dismissToast, user, authReady, authError, refreshUser, login, signup, logout, requireLogin]
+    [page, navigate, theme, toasts, toast, dismissToast, user, authReady, authError, refreshUser, login, signup, logout, requireLogin, takeRedirect]
   );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

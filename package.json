@@ -7,7 +7,10 @@
     "dev": "node scripts/check-env.js && concurrently -k -n api,web -c magenta,cyan \"node --watch-path=api --watch-path=lib --watch-path=server server/dev-server.js\" \"vite\"",
     "build": "vite build",
     "preview": "vite preview",
-    "db:setup": "node scripts/db-setup.js"
+    "db:setup": "node scripts/db-setup.js",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:all": "vitest run && playwright test"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.2.0",
@@ -21,14 +24,17 @@
     "recharts": "2.13.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.1",
     "@vitejs/plugin-react": "4.3.3",
     "autoprefixer": "10.4.20",
     "concurrently": "^10.0.6",
     "express": "^5.3.0",
     "pg": "^8.23.1",
     "postcss": "8.4.47",
+    "supertest": "^7.3.1",
     "tailwindcss": "3.4.14",
-    "vite": "5.4.10"
+    "vite": "5.4.10",
+    "vitest": "^2.1.9"
   },
   "engines": {
     "node": ">=22"

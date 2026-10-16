@@ -26,7 +26,10 @@ export default function Auth({ mode }) {
     e.preventDefault();
     setError('');
     if (isSignup && form.fullName.trim().length < 2) return setError('Please enter your name.');
-    if (isSignup && form.password.length < 8) return setError('Your password needs at least 8 characters.');
+    if (!form.email.trim() || !form.password) return setError('Please enter your email and password.');
+    if (isSignup && (form.password.length < 8 || !/[A-Za-z]/.test(form.password) || !/\d/.test(form.password))) {
+      return setError('Use at least 8 characters, including a letter and a number.');
+    }
     setBusy(true);
     try {
       if (isSignup) {
@@ -87,7 +90,7 @@ export default function Auth({ mode }) {
               value={form.password}
               onChange={set('password')}
               autoComplete={isSignup ? 'new-password' : 'current-password'}
-              placeholder={isSignup ? 'At least 8 characters' : 'Your password'}
+              placeholder={isSignup ? '8+ characters, a letter and a number' : 'Your password'}
               trailing={
                 <button
                   type="button"

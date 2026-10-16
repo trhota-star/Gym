@@ -9,3 +9,7 @@ dist
 
 # Local development database
 .localdb
+
+# Test output
+test-results
+playwright-report

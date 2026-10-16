@@ -10,6 +10,7 @@ import ErrorState from '../components/ErrorState';
 import { Skeleton, SkeletonCard } from '../components/Skeleton';
 import { useApp } from '../context/AppContext';
 import { api } from '../lib/api';
+import { ringProgress } from '../lib/progress';
 
 const TODAY_INDEX = 6; // the chart ends with today
 
@@ -294,7 +295,7 @@ function Meta({ Icon, text }) {
 }
 
 function Ring({ label, done, target, from, to, Icon, delay = 0 }) {
-  const pct = target > 0 ? Math.min(done / target, 1) : 0;
+  const pct = ringProgress(done, target);
   return (
     <div className="flex flex-col items-center text-center">
       <ProgressRing progress={pct} size={104} stroke={9} from={from} to={to} delay={delay} className="sm:scale-110">

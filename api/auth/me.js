@@ -1,13 +1,12 @@
 import { db } from '../../lib/db.js';
-import { clientDate, route } from '../../lib/http.js';
-import { endSession, publicUser, sessionUserId } from '../../lib/auth.js';
+import { HttpError, clientDate, route } from '../../lib/http.js';
+import { endSession, publicUser, requireUser } from '../../lib/auth.js';
 import { activeDays, streaks } from '../../lib/progress.js';
 
-// Logged-out visitors get { user: null } (not a 401) so the public landing page stays quiet
+// 200 with the user when logged in, 401 when not (the app treats 401 as "logged out")
 export default route({
   async GET(req, res) {
-    const userId = await sessionUserId(req);
-    if (!userId) return { user: null };
+    const userId = await requireUser(req);
 
     const sql = db();
     const today = clientDate(req);
@@ -17,7 +16,7 @@ export default route({
     ]);
     if (!user) {
       endSession(res); // account was deleted
-      return { user: null };
+      throw new HttpError(401, 'Please log in to continue.');
     }
     return { user: { ...publicUser(user), streak: streaks(days, today).current } };
   },
