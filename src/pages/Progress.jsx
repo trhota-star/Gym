@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Award, LineChart as LineIcon, Medal, Table2, TrendingUp, Trophy } from 'lucide-react';
+import { LineChart as LineIcon, Table2, TrendingUp, Trophy } from 'lucide-react';
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import PageHeader from '../components/PageHeader';
 import GlassCard from '../components/GlassCard';
@@ -21,8 +21,8 @@ const ranges = [
 
 const tiers = {
   gold: { cls: 'from-amber-300 to-yellow-500', label: 'Gold', Icon: Trophy },
-  silver: { cls: 'from-slate-200 to-slate-400', label: 'Silver', Icon: Medal },
-  bronze: { cls: 'from-orange-300 to-amber-700', label: 'Bronze', Icon: Award },
+  silver: { cls: 'from-slate-200 to-slate-400', label: 'Silver', Icon: Trophy },
+  bronze: { cls: 'from-orange-300 to-amber-700', label: 'Bronze', Icon: Trophy },
 };
 
 export default function Progress() {
@@ -65,7 +65,7 @@ export default function Progress() {
                 <button
                   key={r.key}
                   onClick={() => setRange(r.key)}
-                  className={`rounded-lg px-3 py-1.5 text-sm font-semibold transition ${range === r.key ? 'bg-surface text-ink shadow' : 'text-muted hover:text-ink'}`}
+                  className={`min-h-11 rounded-lg px-3 py-1.5 text-sm font-semibold transition ${range === r.key ? 'bg-surface text-ink shadow' : 'text-muted hover:text-ink'}`}
                 >
                   {r.label}
                 </button>
@@ -81,7 +81,7 @@ export default function Progress() {
                   onClick={() => setView(k)}
                   aria-label={l}
                   title={l}
-                  className={`rounded-lg px-2.5 py-1.5 transition ${view === k ? 'bg-surface text-ink shadow' : 'text-muted hover:text-ink'}`}
+                  className={`grid min-h-11 min-w-11 place-items-center rounded-lg px-2.5 py-1.5 transition ${view === k ? 'bg-surface text-ink shadow' : 'text-muted hover:text-ink'}`}
                 >
                   <Icon className="h-4 w-4" />
                 </button>
@@ -179,7 +179,7 @@ export default function Progress() {
               <p className="mt-4 text-sm text-muted">{pr.lift}</p>
               <p className="font-display text-3xl font-bold">{pr.value}</p>
               <div className="mt-3 flex items-center justify-between text-sm">
-                <span className="inline-flex items-center gap-1 font-semibold text-emerald-500">
+                <span className="inline-flex items-center gap-1 font-semibold text-emerald-700 dark:text-emerald-500">
                   <TrendingUp className="h-4 w-4" /> {pr.delta}
                 </span>
                 <span className="text-muted">{pr.date}</span>
@@ -199,7 +199,7 @@ function Tile({ label, value, decimals, suffix, delta, accent }) {
       <p className="mt-1 font-display text-2xl font-bold sm:text-3xl">
         <AnimatedCounter value={value} decimals={decimals} suffix={suffix} />
       </p>
-      {delta && <p className="mt-1 text-xs font-semibold text-emerald-500">{delta}</p>}
+      {delta && <p className="mt-1 text-xs font-semibold text-emerald-700 dark:text-emerald-500">{delta}</p>}
     </GlassCard>
   );
 }

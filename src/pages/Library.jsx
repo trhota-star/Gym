@@ -11,9 +11,9 @@ import { api } from '../lib/api';
 const groupIcons = { Chest: Shield, Back: Activity, Legs: Zap, Arms: Dumbbell, Core: Flame, Cardio: Heart };
 
 const difficultyStyle = {
-  Beginner: { dots: 1, cls: 'text-emerald-500 bg-emerald-500/10' },
-  Intermediate: { dots: 2, cls: 'text-amber-500 bg-amber-500/10' },
-  Advanced: { dots: 3, cls: 'text-rose-500 bg-rose-500/10' },
+  Beginner: { dots: 1, cls: 'text-emerald-700 dark:text-emerald-500 bg-emerald-500/10' },
+  Intermediate: { dots: 2, cls: 'text-amber-700 dark:text-amber-500 bg-amber-500/10' },
+  Advanced: { dots: 3, cls: 'text-rose-700 dark:text-rose-500 bg-rose-500/10' },
 };
 
 // Exercise ids already in today's (unfinished) workout
@@ -223,7 +223,7 @@ const ExerciseCard = forwardRef(function ExerciseCard({ ex, index, added, busy, 
           onClick={onToggle}
           disabled={busy}
           aria-pressed={added}
-          className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-semibold transition disabled:cursor-wait ${
+          className={`inline-flex min-h-11 items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-semibold transition disabled:cursor-wait ${
             added ? 'bg-brand-gradient text-[#0B0F14] shadow-glow' : 'border border-line/10 hover:border-line/25'
           }`}
         >

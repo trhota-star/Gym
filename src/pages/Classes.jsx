@@ -183,7 +183,7 @@ function ClassCard({ c, index, booked, pending, onBook }) {
 
       <div className="relative mt-5">
         <div className="mb-1.5 flex justify-between text-xs">
-          <span className={full ? 'font-semibold text-rose-500' : low ? 'font-semibold text-orange-400' : 'text-muted'}>
+          <span className={full ? 'font-semibold text-rose-700 dark:text-rose-500' : low ? 'font-semibold text-orange-700 dark:text-orange-400' : 'text-muted'}>
             {full ? 'Class full' : `${c.spots} spot${c.spots === 1 ? '' : 's'} left`}
           </span>
           <span className="text-muted">

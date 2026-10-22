@@ -7,12 +7,17 @@ import AnimatedCounter from '../components/AnimatedCounter';
 import ProgressRing from '../components/ProgressRing';
 import ThemeToggle from '../components/ThemeToggle';
 import { useApp } from '../context/AppContext';
-import { achievements, lifetimeStats, user } from '../data/mock';
+import { initials } from '../lib/api';
+import { achievements, lifetimeStats, user as sample } from '../data/mock';
 
 const Icons = { Zap, Flame, Dumbbell, Sunrise, Users, Trophy, Rocket, Medal, Timer };
 
 export default function Profile() {
-  const { toast } = useApp();
+  const { toast, user: me } = useApp();
+  // Name and streak come from the logged-in account; level, membership and badges are still sample data
+  const user = me
+    ? { ...sample, name: me.fullName, initials: initials(me.fullName), handle: me.email, streak: me.streak }
+    : sample;
   const unlocked = achievements.filter((a) => a.unlocked).length;
 
   const share = async () => {
@@ -39,7 +44,7 @@ export default function Profile() {
         </div>
         <div className="relative px-5 pb-6 sm:px-8">
           <div className="-mt-14 flex flex-col gap-4 sm:-mt-16 sm:flex-row sm:items-end sm:justify-between">
-            <div className="flex items-end gap-4">
+            <div className="flex min-w-0 items-end gap-4">
               <div className="relative">
                 <ProgressRing progress={user.xp / user.xpToNext} size={116} stroke={6} from="#C6FF3D" to="#22D3EE">
                   <span className="grid h-[92px] w-[92px] place-items-center rounded-full bg-gradient-to-br from-violet-500 to-cyan-400 font-display text-3xl font-bold text-white ring-4 ring-surface">
@@ -50,9 +55,9 @@ export default function Profile() {
                   LVL {user.level}
                 </span>
               </div>
-              <div className="pb-1">
-                <h1 className="text-2xl font-bold sm:text-3xl">{user.name}</h1>
-                <p className="text-sm text-muted">{user.handle}</p>
+              <div className="min-w-0 pb-1">
+                <h1 className="truncate text-2xl font-bold sm:text-3xl">{user.name}</h1>
+                <p className="truncate text-sm text-muted" title={user.handle}>{user.handle}</p>
               </div>
             </div>
             <div className="flex gap-2">

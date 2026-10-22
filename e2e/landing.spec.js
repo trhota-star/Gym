@@ -5,8 +5,7 @@ test.describe('Landing page (public)', () => {
   test('loads with PulseFit in the tab title, navbar and hero', async ({ page }) => {
     const errors = [];
     page.on('pageerror', (e) => errors.push(e.message));
-    // A logged-out visitor's /api/auth/me is a deliberate 401, which Chrome logs as a resource error
-    page.on('console', (m) => m.type() === 'error' && !/status of 401/.test(m.text()) && errors.push(m.text()));
+    page.on('console', (m) => ['error', 'warning'].includes(m.type()) && errors.push(m.text()));
 
     await page.goto('/');
     await expect(page).toHaveTitle(/PulseFit/);

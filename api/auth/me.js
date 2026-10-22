@@ -1,12 +1,17 @@
 import { db } from '../../lib/db.js';
-import { HttpError, clientDate, route } from '../../lib/http.js';
-import { endSession, publicUser, requireUser } from '../../lib/auth.js';
+import { clientDate, route } from '../../lib/http.js';
+import { endSession, publicUser, sessionUserId } from '../../lib/auth.js';
 import { activeDays, streaks } from '../../lib/progress.js';
 
-// 200 with the user when logged in, 401 when not (the app treats 401 as "logged out")
+// 200 with the user when logged in, 200 with `user: null` when not. Being logged out is a
+// normal answer here, not an error, so a visitor's browser console stays free of 401s.
 export default route({
   async GET(req, res) {
-    const userId = await requireUser(req);
+    const userId = await sessionUserId(req);
+    if (!userId) {
+      if (req.headers.cookie?.includes('pf_session=')) endSession(res); // expired or tampered token
+      return { user: null };
+    }
 
     const sql = db();
     const today = clientDate(req);
@@ -16,7 +21,7 @@ export default route({
     ]);
     if (!user) {
       endSession(res); // account was deleted
-      throw new HttpError(401, 'Please log in to continue.');
+      return { user: null };
     }
     return { user: { ...publicUser(user), streak: streaks(days, today).current } };
   },

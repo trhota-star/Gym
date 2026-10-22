@@ -98,7 +98,9 @@ describe('POST /api/auth/login and /api/auth/logout', () => {
     const out = await agent.post('/api/auth/logout');
     expect(out.status).toBe(200);
     expect(out.headers['set-cookie'][0]).toMatch(/pf_session=;.*Max-Age=0/);
-    expect((await agent.get('/api/auth/me')).status).toBe(401);
+    const after = await agent.get('/api/auth/me');
+    expect(after.status).toBe(200);
+    expect(after.body.user).toBeNull();
   });
 });
 
@@ -110,14 +112,19 @@ describe('GET /api/auth/me', () => {
     expect(res.body.user).toMatchObject({ email, fullName: 'Morgan Lee', streak: 0 });
   });
 
-  it('returns 401 when logged out', async () => {
-    expect((await request(await getApp()).get('/api/auth/me')).status).toBe(401);
+  // Logged out is a normal answer (not a 401), so visitors' browser consoles stay clean
+  it('returns user: null when logged out', async () => {
+    const res = await request(await getApp()).get('/api/auth/me');
+    expect(res.status).toBe(200);
+    expect(res.body.user).toBeNull();
   });
 
-  it('returns 401 for a forged or tampered token', async () => {
+  it('returns user: null and clears the cookie for a forged or tampered token', async () => {
     const app = await getApp();
     const forged = await request(app).get('/api/auth/me').set('Cookie', 'pf_session=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIn0.bad');
-    expect(forged.status).toBe(401);
+    expect(forged.status).toBe(200);
+    expect(forged.body.user).toBeNull();
+    expect(forged.headers['set-cookie'][0]).toMatch(/pf_session=;.*Max-Age=0/);
   });
 
   it('only accepts POST for login, signup and logout', async () => {

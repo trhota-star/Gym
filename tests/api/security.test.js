@@ -10,7 +10,6 @@ const q = `?date=${DATE}`;
 
 describe('protected routes need a login', () => {
   it.each([
-    ['GET', '/api/auth/me'],
     ['GET', '/api/dashboard'],
     ['GET', '/api/workouts'],
     ['POST', '/api/workouts'],

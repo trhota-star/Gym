@@ -178,7 +178,7 @@ export default function Dashboard() {
                       done
                         ? 'bg-gradient-to-br from-orange-400 to-rose-500 text-white'
                         : today
-                          ? 'border-2 border-dashed border-orange-400 text-orange-400'
+                          ? 'border-2 border-dashed border-orange-400 text-orange-700 dark:text-orange-400'
                           : 'bg-line/[0.06] text-muted'
                     }`}
                   >
@@ -271,7 +271,7 @@ export default function Dashboard() {
                   </p>
                 </div>
               </div>
-              <p className="mt-3 text-sm text-orange-400">{nextClass.capacity} spots in this class</p>
+              <p className="mt-3 text-sm text-orange-700 dark:text-orange-400">{nextClass.capacity} spots in this class</p>
               <button onClick={() => navigate('classes')} className="btn-ghost mt-auto w-full pt-3">
                 View schedule <ArrowRight className="h-4 w-4" />
               </button>

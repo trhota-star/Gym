@@ -157,7 +157,7 @@ export default function Auth({ mode }) {
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="rounded-xl bg-rose-500/10 px-4 py-3 text-sm text-rose-500"
+                  className="rounded-xl bg-rose-500/10 px-4 py-3 text-sm text-rose-700 dark:text-rose-500"
                   role="alert"
                 >
                   {error}

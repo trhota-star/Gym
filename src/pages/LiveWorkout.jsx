@@ -229,7 +229,7 @@ export default function LiveWorkout() {
             {!finished && <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-rose-500 opacity-75" />}
             <span className={`relative inline-flex h-2.5 w-2.5 rounded-full ${finished ? 'bg-lime-400' : 'bg-rose-500'}`} />
           </span>
-          <span className={`eyebrow ${finished ? '' : '!text-rose-500'}`}>{finished ? 'Completed today' : 'Live workout'}</span>
+          <span className={`eyebrow ${finished ? '' : '!text-rose-700 dark:!text-rose-500'}`}>{finished ? 'Completed today' : 'Live workout'}</span>
         </div>
         <div className="mt-2 flex flex-wrap items-end justify-between gap-3">
           <h1 className="text-3xl font-bold sm:text-4xl">{workout.name}</h1>

@@ -6,7 +6,7 @@ export default function Logo({ size = 'md', onClick }) {
     <button
       type="button"
       onClick={onClick}
-      className="group inline-flex items-center gap-2.5 focus:outline-none"
+      className="group inline-flex min-h-11 items-center gap-2.5 focus:outline-none"
       aria-label="PulseFit home"
     >
       <span
