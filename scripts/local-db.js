@@ -2,7 +2,7 @@
 // listening only on localhost. It uses the PostgreSQL programs already installed on this
 // computer and never touches any other database server. Deployed builds use Neon instead.
 import { execFileSync, spawnSync } from 'node:child_process';
-import { existsSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { ROOT } from './env.js';
 
@@ -12,10 +12,14 @@ const LOG_FILE = join(ROOT, '.localdb', 'postgres.log');
 export const isLocalUrl = (url = '') => /@(localhost|127\.0\.0\.1)(:\d+)?\//.test(url);
 
 function findBin() {
+  // A data folder only opens with the major version that created it, so prefer that one
+  // (installing a newer PostgreSQL later must not break an existing local database)
+  const dataVersion = existsSync(join(DATA_DIR, 'PG_VERSION')) ? readFileSync(join(DATA_DIR, 'PG_VERSION'), 'utf8').trim() : null;
   const candidates = [process.env.PG_BIN];
   for (const base of ['C:\\Program Files\\PostgreSQL', 'C:\\Program Files (x86)\\PostgreSQL']) {
     if (!existsSync(base)) continue;
-    for (const v of readdirSync(base).sort((a, b) => Number(b) - Number(a))) candidates.push(join(base, v, 'bin'));
+    const versions = readdirSync(base).sort((a, b) => (b === dataVersion) - (a === dataVersion) || Number(b) - Number(a));
+    for (const v of versions) candidates.push(join(base, v, 'bin'));
   }
   candidates.push('/usr/lib/postgresql/16/bin', '/opt/homebrew/bin', '/usr/local/bin');
   const exe = process.platform === 'win32' ? '.exe' : '';
@@ -48,9 +52,21 @@ export function ensureLocalDb(url) {
     console.log(`🗄️  Local database running on localhost:${port || 5432}`);
   }
 
+  // -w: never wait at a hidden password prompt. Our private database trusts localhost, so a
+  // password request means some other PostgreSQL (e.g. a Windows service) owns this port.
   const psql = (sql, dbName = 'postgres') =>
-    execFileSync(tool('psql'), ['-h', 'localhost', '-p', port || '5432', '-U', user, '-d', dbName, '-tAc', sql], { encoding: 'utf8' }).trim();
-  if (psql(`SELECT 1 FROM pg_database WHERE datname = '${db.replace(/'/g, '')}'`) !== '1') {
-    execFileSync(tool('createdb'), ['-h', 'localhost', '-p', port || '5432', '-U', user, db]);
+    execFileSync(tool('psql'), ['-w', '-h', 'localhost', '-p', port || '5432', '-U', user, '-d', dbName, '-tAc', sql], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+    }).trim();
+  let exists;
+  try {
+    exists = psql(`SELECT 1 FROM pg_database WHERE datname = '${db.replace(/'/g, '')}'`) === '1';
+  } catch {
+    throw new Error(
+      `Port ${port || 5432} is already used by a different PostgreSQL server. ` +
+        'Pick a free port in DATABASE_URL in .env (e.g. localhost:5434) and run "npm run dev" again.'
+    );
   }
+  if (!exists) execFileSync(tool('createdb'), ['-w', '-h', 'localhost', '-p', port || '5432', '-U', user, db]);
 }
